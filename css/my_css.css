@@ -98,6 +98,11 @@
     display: block;
 }
 
+.highlight {
+    box-shadow: inset 0 0 3px 3px rgba(23, 99, 34, 0.978);
+}
+
+
 .switch {
     position: relative;
     display: inline-block;
