@@ -15,6 +15,7 @@ var currentCorrectMoves = []
 var currentCorrectSquares = []
 var $current_score = $("#current_score")
 var $board = null
+const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const audio_error = new Audio('sound/audio_wrong_move.wav')
 const audio_correct = new Audio('sound/audio_correct_move.wav')
 const audio_next_round = new Audio('sound/audio_next_round.wav')
@@ -22,10 +23,11 @@ var menu_container = document.getElementById("menu_container_id");
 var game_container = document.getElementById("game_container_id");
 var score_ref = document.getElementById("total_score_id");
 var round_ref = document.getElementById("current_round_id");
+var title_ref = document.getElementById("board_title_id");
+var turn_ref = document.getElementById("turn_to_move");
 var squareClass = 'square-55d63'
 var squareToHighlight = null
 var colorToHighlight = null
-//var possibleMovesTemp = null
 
 // Get reference to the menu option buttons and set onClick callbacks
 
@@ -45,16 +47,36 @@ function reset_game() {
     correctMoves = []
 }
 
+function setTitle(current_game_regime) {
+    switch (current_game_regime) {
+        case 1: title_ref.innerHTML = "Find all checking moves in the position"
+            break
+        case 2: title_ref.innerHTML = "Find all capturing moves in the position"
+            break
+        case 3: title_ref.innerHTML = "Find all undefended squares in the position"
+            break
+        default: title_ref.innerHTML = "Find all correct moves/squares in the position"
+    }
+}
+
+function setTurnText(chess_game) {
+    turn_ref.innerHTML = "White to move"
+    if (chess_game.turn() == 'b') {
+        turn_ref.innerHTML = "Black to move"
+    }
+}
+
 function startGame(current_game_regime) {
     menu_container.style.display = "none";
     game_container.style.display = "block";
+
     game_regime = current_game_regime
     console.log("startGame() worked and the startNextRound() is called")
     startNextRound(game_regime)
 }
 
 function startNextRound(regime) {
-
+    setTitle(regime)
     // reset round stats
     roundNumber += 1
     round_ref.innerHTML = roundNumber
@@ -104,9 +126,13 @@ function startNextRound(regime) {
         onSnapEnd: onSnapEnd
     }
     board = Chessboard('board', config)
-    // jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
-    //     e.preventDefault();
-    // });
+
+    // Show who's turn it is
+    setTurnText(game)
+    // Prevent scrolling the whole page
+    jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
+        e.preventDefault();
+    });
 
 }
 
@@ -122,18 +148,12 @@ function onDragStart(source, piece, position, orientation) {
 
     // check if the game is in regime 3 and implement logic
     if (game_regime == 3) {
-        console.log('onDragStart fired')
-        console.log('This is the piece selected piece')
-        console.log(piece)
 
         if (isUndefended(source, currentCorrectSquares)) {
 
-            console.log('This is source')
-            console.log(source)
             if (alreadyFoundSquares.includes(source)) {
                 //ToDo: change the sound to already found this square/move sound
                 cloneAndPlay(audio_error)
-                console.log("This square has already been found previously!")
             } else {
                 alreadyFoundSquares.push(source)
                 updateScore()
@@ -143,16 +163,12 @@ function onDragStart(source, piece, position, orientation) {
                     startNextRound(game_regime)
                     return false
                 } else {
-                    console.log('Correct!')
-                    console.log(source)
                     highlightSquare(source)
                     cloneAndPlay(audio_correct)
                 }
             }
             $current_score.html(current_score)
         } else {
-            console.log('The piece on this square is defended!')
-            console.log(source)
             cloneAndPlay(audio_error)
         }
         return false
@@ -169,6 +185,47 @@ function onDragStart(source, piece, position, orientation) {
     }
 }
 
+function findKingNearby(square, game) {
+    //check if there is a king of same color neighboring the selected square
+    let letters_nearby = []
+    let numbers_nearby = []
+    let square_letter = square.charAt(0);
+    let square_number = parseInt(square.charAt(1))
+    let square_letter_index = letters.indexOf(square_letter)
+    if (square_letter_index == 0) {
+        letters_nearby = ['a', 'b']
+    } else if (square_letter_index == 7) {
+        letters_nearby = ['g', 'h']
+    } else {
+        letters_nearby = [letters[square_letter_index - 1], square_letter, letters[square_letter_index + 1]]
+    }
+    if (square_number == 1) {
+        numbers_nearby = [1, 2]
+    } else if (square_number == 8) {
+        numbers_nearby = [7, 8]
+    } else {
+        numbers_nearby = [square_number - 1, square_number, square_number + 1]
+    }
+
+    let i
+    let j
+    let temp_square = null
+    for (i = 0; i < letters_nearby.length; i++) {
+        for (j = 0; j < numbers_nearby.length; j++) {
+            temp_square = letters_nearby[i] + numbers_nearby[j]
+            // check if there is a piece on this nearby square
+            if (game.get(temp_square) == null) {
+                continue
+            }
+            // check if the piece is a king of corresponding color
+            if (game.get(temp_square).type.includes('k') && (game.turn() == game.get(temp_square).color)) {
+                return true
+            }
+        }
+    }
+    return false
+}
+
 function getListOfCorrectSquares(fen) {
     // Get all the squares that have undefended pieces 
     // ToDo: Decide if only for 1 side or both. Currently 1 sides
@@ -177,66 +234,51 @@ function getListOfCorrectSquares(fen) {
     if (tempGame.in_check()) {
         //return empty list which will force to pick new random FEN position
         let emptyList = []
-        console.log('Initial position is a check. Picking another one')
         return emptyList
     }
     var allPieceSquares = getAllPieceSquares(tempGame)
-    console.log('this is all the squares that have pieces')
     console.log(allPieceSquares)
     var ind
     for (ind = 0; ind < allPieceSquares.length; ind++) {
         var selected_square = allPieceSquares[ind]
-        console.log('selected_square: %o', selected_square);
         var pieceOnSelectedSquare = tempGame.get(selected_square)
         pieceOnSelectedSquareString = pieceOnSelectedSquare.type + pieceOnSelectedSquare.color
         // Check if the current piece is of another color than the turn
         if (pieceOnSelectedSquare.color != tempGame.turn()) {
-            console.log('This piece is of another color. Checking the next one...')
             continue
         }
         //Check if the current piece is a king
         if (pieceOnSelectedSquareString.includes("k") || pieceOnSelectedSquareString.includes("K")) {
-            console.log('This piece is a king. Checking the next one...')
             continue
         }
 
         new_piece = swapPieceColor(pieceOnSelectedSquare)
         tempGame.put(new_piece, selected_square)
-        //Todo: check if the position is a valid fen
+        //Todo: check if the position is a valid fen. For example there can be mutual check after swap
         var possibleMovesTemp = tempGame.moves({ verbose: true })
-        console.log('This is possibleMovesTemp within getListOfCorrectSquares()')
-        console.log(possibleMovesTemp)
 
         let possibleMovesTempTo = [];
         var i
         for (i = 0; i < possibleMovesTemp.length; i++) {
             possibleMovesTempTo[i] = possibleMovesTemp[i]["to"];
         }
-        console.log('possibleMovesTempTo')
-        console.log(possibleMovesTempTo);
         //Todo: check if the returned object exists
 
-        if (possibleMovesTempTo.includes(selected_square)) {
-            console.log('This square is defended')
+        if (possibleMovesTempTo.includes(selected_square) || findKingNearby(selected_square, tempGame) == true) {
         } else {
-            console.log('This square is not defended. ' + selected_square + ' Adding to the correct squares list')
             correctSquares.push(selected_square)
         }
         //reverting back the swaped piece to check the next one
-        console.log('reverting back the swaped piece on ' + selected_square + ' square')
         pieceOnSelectedSquare = tempGame.get(selected_square)
         new_piece = swapPieceColor(pieceOnSelectedSquare)
         tempGame.put(new_piece, selected_square)
     }
-    console.log('This is the final list of correct squares')
-    console.log(correctSquares)
     currentCorrectSquares = correctSquares
     return correctSquares
 }
 
 function getAllPieceSquares(tempGame) {
 
-    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     var allPieceSquares = []
     var i
     var j

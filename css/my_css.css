@@ -18,12 +18,20 @@
     font-size: xx-large;
 }
 
-.board_title {
+.board_title_container {
     width: auto;
     margin: 0 auto;
     margin-top: 50px;
     text-align: center;
     font-size: xx-large;
+}
+
+#turn_to_move {
+    width: auto;
+    margin: 0 auto;
+    text-align: center;
+    font-size: x-large;
+    margin-top: 12px;
 }
 
 .game_container {
@@ -101,7 +109,6 @@
 .highlight {
     box-shadow: inset 0 0 3px 3px rgba(23, 99, 34, 0.978);
 }
-
 
 .switch {
     position: relative;
