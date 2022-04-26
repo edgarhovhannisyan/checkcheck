@@ -298,9 +298,7 @@ function getAllPieceSquares(tempGame) {
 }
 
 function isUndefended(square, listOfCorrectSquares) {
-    console.log('We are inside isUndefended. This is square')
     console.log(square)
-    console.log('This is listOfCorrectSquares')
     console.log(listOfCorrectSquares)
     if (listOfCorrectSquares.includes(square)) {
         return true
@@ -339,10 +337,6 @@ function getListOfCorrectMoves(fen, regime) {
             for (i = 0; i < possibleMoves.length; i++) {
                 if ('captured' in possibleMoves[i]) {
                     correctMoves.push(possibleMoves[i])
-                    console.log("Let's check if captured key is in possibleMoves[i]")
-                    console.log('This is possibleMoves[i]')
-                    console.log(possibleMoves[i])
-                    console.log('This is if captured in possibleMoves[i]')
                 } else {
                     console.log('This move is not a capture')
                     console.log(possibleMoves[i])
@@ -398,7 +392,7 @@ function onDrop(source, target) {
     var move = game.move({
         from: source,
         to: target,
-        promotion: 'q' // TODO: always promote to a queen for example simplicity
+        promotion: 'qr' // TODO: always promote to a queen for example simplicity
     })
 
     // illegal move
