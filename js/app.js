@@ -1,10 +1,14 @@
 // NOTE: this example uses the chess.js chessboard.js libraries:
 // https://github.com/jhlywa/chess.js
 
-var board = null
-var game = new Chess()
 const alreadyFoundMoves = []
 const alreadyFoundSquares = []
+const audio_error = new Audio('sound/audio_wrong_move.wav')
+const audio_correct = new Audio('sound/audio_correct_move.wav')
+const audio_next_round = new Audio('sound/audio_next_round.wav')
+
+var board = null
+var game = new Chess()
 var total_score = 0
 var game_regime = 0
 var current_score = 0
@@ -15,19 +19,13 @@ var currentCorrectMoves = []
 var currentCorrectSquares = []
 var $current_score = $("#current_score")
 var $board = null
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-const audio_error = new Audio('sound/audio_wrong_move.wav')
-const audio_correct = new Audio('sound/audio_correct_move.wav')
-const audio_next_round = new Audio('sound/audio_next_round.wav')
+var squareClass = 'square-55d63'
+var squareToHighlight = null
+var colorToHighlight = null
 var menu_container = document.getElementById("menu_container_id");
 var game_container = document.getElementById("game_container_id");
 var score_ref = document.getElementById("total_score_id");
 var round_ref = document.getElementById("current_round_id");
-var title_ref = document.getElementById("board_title_id");
-var turn_ref = document.getElementById("turn_to_move");
-var squareClass = 'square-55d63'
-var squareToHighlight = null
-var colorToHighlight = null
 
 // Get reference to the menu option buttons and set onClick callbacks
 
@@ -71,7 +69,7 @@ function startGame(current_game_regime) {
     game_container.style.display = "block";
 
     game_regime = current_game_regime
-    console.log("startGame() worked and the startNextRound() is called")
+    //console.log("startGame() worked and the startNextRound() is called")
     startNextRound(game_regime)
 }
 
@@ -90,22 +88,26 @@ function startNextRound(regime) {
     if (regime == 3) {
         currentCorrectSquares = getListOfCorrectSquares(pickedFen)
         while (currentCorrectSquares.length < 1) {
-            console.log('Trying another position, as this one had no undefended squares')
+            //console.log('Trying another position, as this one had no undefended squares')
             pickedFen = pickRandomFEN(db_fen_js)
             currentCorrectSquares = getListOfCorrectSquares(pickedFen)
         }
         num_correct_squares = currentCorrectSquares.length
-        console.log('This is the final list of correct squares')
-        console.log(currentCorrectSquares)
+        //console.log('This is the final list of correct squares')
+        //console.log(currentCorrectSquares)
     } else {
-        while (getListOfCorrectMoves(pickedFen, regime).length < 1) {
-            console.log('Trying another position, as this one had no checking/capturing moves')
+        currentCorrectMoves = getListOfCorrectMoves(pickedFen, regime)
+        // for promotion debug add '|| (!hasPromotionInCorrect(currentCorrectMoves))' in while condition
+        while (currentCorrectMoves.length < 1) {
+            //console.log('Trying another position, as this one had no checking/capturing moves')
             pickedFen = pickRandomFEN(db_fen_js)
+            currentCorrectMoves = getListOfCorrectMoves(pickedFen, regime)
         }
-        num_correct_moves = getListOfCorrectMoves(pickedFen, regime).length
     }
+    num_correct_moves = currentCorrectMoves.length
+    //console.log('This is the final list of correct moves')
+    //console.log(currentCorrectMoves)
 
-    console.log('Starting the game and setting up the board')
     //Start the game with picked FEN position and set the board
     game.load(pickedFen)
 
@@ -125,19 +127,15 @@ function startNextRound(regime) {
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
     }
-    board = Chessboard('board', config)
 
-    // Show who's turn it is
-    setTurnText(game)
-    // Prevent scrolling the whole page
+    // touchmove semifix
+    board = Chessboard('board', config)
     jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
         e.preventDefault();
     });
-
 }
 
 function pickRandomFEN(db_fen) {
-
     var obj_keys = Object.keys(db_fen);
     var ran_fen_num = Math.floor(Math.random() * obj_keys.length);
     //To do: Make sure random key is different from the previous keys
@@ -148,12 +146,14 @@ function onDragStart(source, piece, position, orientation) {
 
     // check if the game is in regime 3 and implement logic
     if (game_regime == 3) {
+        //console.log('onDragStart fired')
 
         if (isUndefended(source, currentCorrectSquares)) {
 
             if (alreadyFoundSquares.includes(source)) {
                 //ToDo: change the sound to already found this square/move sound
                 cloneAndPlay(audio_error)
+                //console.log("This square has already been found previously!")
             } else {
                 alreadyFoundSquares.push(source)
                 updateScore()
@@ -163,12 +163,16 @@ function onDragStart(source, piece, position, orientation) {
                     startNextRound(game_regime)
                     return false
                 } else {
+                    //console.log('Correct!')
+                    //console.log(source)
                     highlightSquare(source)
                     cloneAndPlay(audio_correct)
                 }
             }
             $current_score.html(current_score)
         } else {
+            //console.log('The piece on this square is defended!')
+            //console.log(source)
             cloneAndPlay(audio_error)
         }
         return false
@@ -232,7 +236,7 @@ function getListOfCorrectSquares(fen) {
     var correctSquares = []
     var tempGame = new Chess(fen)
     if (tempGame.in_check()) {
-        //return empty list which will force to pick new random FEN position
+        //return empty list which will force to pick a new random FEN position
         let emptyList = []
         return emptyList
     }
@@ -277,8 +281,51 @@ function getListOfCorrectSquares(fen) {
     return correctSquares
 }
 
-function getAllPieceSquares(tempGame) {
+function rmDuplicatePromotions(correctMoves, regime) {
 
+    var finalCorrectMoves = []
+    var i
+    switch (regime) {
+        case 1:
+            // Remove non-queen or non knight promotions for regime 1 
+            for (i = 0; i < correctMoves.length; i++) {
+                if (correctMoves[i].flags.includes('p') && (correctMoves[i].promotion.includes('r') || correctMoves[i].promotion.includes('b'))) {
+                    continue
+                } else {
+                    finalCorrectMoves.push(correctMoves[i])
+                }
+            }
+            break
+        case 2:
+            // Remove non-queen capturing promotions for regime 2 
+            for (i = 0; i < correctMoves.length; i++) {
+                if (correctMoves[i].flags.includes('p') && !(correctMoves[i].promotion.includes('q'))) {
+                    continue
+                } else {
+                    finalCorrectMoves.push(correctMoves[i])
+                }
+            }
+            break
+        default:
+            console.log('Should not enter here, if everything is correct')
+    }
+
+    return finalCorrectMoves
+}
+
+function hasPromotionInCorrect(correctMoves) {
+    //helper function for debugging positions with promotion moves
+    var i
+    const list_rm_moves = correctMoves.filter(move => move.flags.includes('p'));
+    if (list_rm_moves.length < 1) {
+        return false
+    }
+    return true
+}
+
+function getAllPieceSquares(tempGame) {
+    // Get all squares that are occupied by a piece/pawn
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     var allPieceSquares = []
     var i
     var j
@@ -298,8 +345,6 @@ function getAllPieceSquares(tempGame) {
 }
 
 function isUndefended(square, listOfCorrectSquares) {
-    console.log(square)
-    console.log(listOfCorrectSquares)
     if (listOfCorrectSquares.includes(square)) {
         return true
     } else {
@@ -318,7 +363,6 @@ function getListOfCorrectMoves(fen, regime) {
 
         case 1:
             // If the "Find all chekcs" option is selected go over all moves and store the ones which result in a checked position
-            console.log("we are in regime 1")
             var i;
             for (i = 0; i < possibleMoves.length; i++) {
                 tempGame.move(possibleMoves[i])
@@ -327,21 +371,21 @@ function getListOfCorrectMoves(fen, regime) {
                 }
                 tempGame.undo()
             }
+            correctMoves = rmDuplicatePromotions(correctMoves, 1)
             currentCorrectMoves = correctMoves
             return correctMoves
         case 2:
             // If the "Find all captures" option is selected go over all moves and store the ones which are capture moves
-            console.log("we are in regime 2")
-
             var i;
             for (i = 0; i < possibleMoves.length; i++) {
                 if ('captured' in possibleMoves[i]) {
                     correctMoves.push(possibleMoves[i])
                 } else {
-                    console.log('This move is not a capture')
-                    console.log(possibleMoves[i])
+                    //console.log('This move is not a capture')
+                    //console.log(possibleMoves[i])
                 }
             }
+            correctMoves = rmDuplicatePromotions(correctMoves, 2)
             currentCorrectMoves = correctMoves
             return correctMoves
         case 3:
@@ -405,7 +449,7 @@ function onDrop(source, target) {
         var fromToObject = { from: move.from, to: move.to }
         if (containsObject(fromToObject, alreadyFoundMoves)) {
             cloneAndPlay(audio_error)
-            console.log("This move has already been found previously!")
+            //console.log("This move has already been found previously!")
         } else {
             alreadyFoundMoves.push(fromToObject)
             updateScore()
