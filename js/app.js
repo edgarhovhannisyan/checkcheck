@@ -6,7 +6,7 @@ const alreadyFoundSquares = []
 const audio_error = new Audio('sound/audio_wrong_move.wav')
 const audio_correct = new Audio('sound/audio_correct_move.wav')
 const audio_next_round = new Audio('sound/audio_next_round.wav')
-
+const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 var board = null
 var game = new Chess()
 var total_score = 0
@@ -24,8 +24,10 @@ var squareToHighlight = null
 var colorToHighlight = null
 var menu_container = document.getElementById("menu_container_id");
 var game_container = document.getElementById("game_container_id");
+var title_ref = document.getElementById("board_title_id");
 var score_ref = document.getElementById("total_score_id");
 var round_ref = document.getElementById("current_round_id");
+var turn_ref = document.getElementById("turn_to_move");
 
 // Get reference to the menu option buttons and set onClick callbacks
 
@@ -45,29 +47,9 @@ function reset_game() {
     correctMoves = []
 }
 
-function setTitle(current_game_regime) {
-    switch (current_game_regime) {
-        case 1: title_ref.innerHTML = "Find all checking moves in the position"
-            break
-        case 2: title_ref.innerHTML = "Find all capturing moves in the position"
-            break
-        case 3: title_ref.innerHTML = "Find all undefended squares in the position"
-            break
-        default: title_ref.innerHTML = "Find all correct moves/squares in the position"
-    }
-}
-
-function setTurnText(chess_game) {
-    turn_ref.innerHTML = "White to move"
-    if (chess_game.turn() == 'b') {
-        turn_ref.innerHTML = "Black to move"
-    }
-}
-
 function startGame(current_game_regime) {
     menu_container.style.display = "none";
     game_container.style.display = "block";
-
     game_regime = current_game_regime
     //console.log("startGame() worked and the startNextRound() is called")
     startNextRound(game_regime)
@@ -112,10 +94,8 @@ function startNextRound(regime) {
     game.load(pickedFen)
 
     var orient = 'white'
-    //Todo: add label white to move
     if (game.turn() == 'b') {
         orient = 'black'
-        //Todo: add label black to move
     }
     var config = {
         draggable: true,
@@ -127,8 +107,9 @@ function startNextRound(regime) {
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
     }
-
-    // touchmove semifix
+    // Show who's turn it is
+    setTurnText(game)
+    // Touchmove semifix
     board = Chessboard('board', config)
     jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
         e.preventDefault();
@@ -163,16 +144,12 @@ function onDragStart(source, piece, position, orientation) {
                     startNextRound(game_regime)
                     return false
                 } else {
-                    //console.log('Correct!')
-                    //console.log(source)
                     highlightSquare(source)
                     cloneAndPlay(audio_correct)
                 }
             }
             $current_score.html(current_score)
         } else {
-            //console.log('The piece on this square is defended!')
-            //console.log(source)
             cloneAndPlay(audio_error)
         }
         return false
@@ -236,7 +213,7 @@ function getListOfCorrectSquares(fen) {
     var correctSquares = []
     var tempGame = new Chess(fen)
     if (tempGame.in_check()) {
-        //return empty list which will force to pick a new random FEN position
+        //return empty list which will force to pick new random FEN position
         let emptyList = []
         return emptyList
     }
@@ -325,7 +302,6 @@ function hasPromotionInCorrect(correctMoves) {
 
 function getAllPieceSquares(tempGame) {
     // Get all squares that are occupied by a piece/pawn
-    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     var allPieceSquares = []
     var i
     var j
@@ -345,6 +321,7 @@ function getAllPieceSquares(tempGame) {
 }
 
 function isUndefended(square, listOfCorrectSquares) {
+
     if (listOfCorrectSquares.includes(square)) {
         return true
     } else {
@@ -436,7 +413,7 @@ function onDrop(source, target) {
     var move = game.move({
         from: source,
         to: target,
-        promotion: 'qr' // TODO: always promote to a queen for example simplicity
+        promotion: 'q' // TODO: always promote to a queen for example simplicity
     })
 
     // illegal move
@@ -479,4 +456,23 @@ function cloneAndPlay(audioNode) {
     // the true parameter will tell the function to make a deep clone (cloning attributes as well)
     var clone = audioNode.cloneNode(true);
     clone.play();
+}
+
+function setTitle(current_game_regime) {
+    switch (current_game_regime) {
+        case 1: title_ref.innerHTML = "Find all checking moves in the position"
+            break
+        case 2: title_ref.innerHTML = "Find all capturing moves in the position"
+            break
+        case 3: title_ref.innerHTML = "Find all undefended squares in the position"
+            break
+        default: title_ref.innerHTML = "Find all correct moves/squares in the position"
+    }
+}
+
+function setTurnText(chess_game) {
+    turn_ref.innerHTML = "White to move"
+    if (chess_game.turn() == 'b') {
+        turn_ref.innerHTML = "Black to move"
+    }
 }
