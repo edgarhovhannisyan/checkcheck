@@ -2,7 +2,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
 }
 
-.menu {
+#menu {
     margin: 0 auto;
     margin-bottom: 50px;
     width: 250px;
@@ -34,7 +34,7 @@
     margin-top: 12px;
 }
 
-.game_container {
+#game_container_id {
     width: 100%;
     margin: auto;
     display: none;
@@ -83,31 +83,131 @@
 
 #left_game_panel {
     width: 28%;
-    font-size: 128px;
     color: #000000;
-    padding-top: 150px;
+    border: #000000;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+    justify-content: center;
+}
+
+.left_stat_container {
+    width: auto;
+    border: #000000;
+    border-width: 1px;
+    font-size: 88px;
+    display: block;
     text-align: center;
+
 }
 
 #central_game_panel {
     width: 44%;
+    border: #000000;
+    border-width: 1px;
 }
 
 #right_game_panel {
     width: 28%;
-    font-size: 128px;
+    font-size: 88px;
     color: #000000;
-    padding-top: 150px;
+    border: #000000;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+}
+
+.below_game_panel {
+    width: 100%;
+    margin: auto;
     text-align: center;
+    font-size: xx-large;
 }
 
 .stat_title {
-    font-size: 36px;
     display: block;
+    font-size: xx-large;
+}
+
+#finishedGameResultsPanel {
+    margin: auto;
+    width: 40%;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    z-index: 1001;
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: none;
+}
+
+.finishedGameResultsContainer {
+    width: 100%;
+    margin: auto;
+    border: #000000;
+    border-width: 1px;
+    z-index: 1001;
+    background-color: rgb(255, 255, 255);
+}
+
+
+#finishedGameTrophyImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    content: url(../img/results/owl00.PNG);
+    z-index: 1001;
+    background: transparent;
+    padding: 32px;
+    padding-top: 32px;
+}
+
+.finishedGameMsg {
+    font-size: xx-large;
+    padding: 2px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.line {
+    width: 90%;
+    height: 1px;
+    border-bottom: 2px solid rgb(72, 72, 72);
+    margin: auto;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.finishedGameButtons {
+    width: auto;
+    display: flex;
+    justify-content: center;
 }
 
 .highlight {
     box-shadow: inset 0 0 3px 3px rgba(23, 99, 34, 0.978);
+}
+
+#opaque {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: black;
+    filter: alpha(opacity=80);
+    opacity: 0.8;
+    display: none;
+}
+
+* html #opaque {
+    position: absolute;
 }
 
 .switch {

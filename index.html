@@ -19,7 +19,7 @@
       <p><strong>There are 3 training options. Choose one to start</strong><br />
     </div>
 
-    <div class="menu">
+    <div id="menu">
       <button class="button button_menu" type="button" id="checks_button">Checks</button>
       <button class="button button_menu" type="button" id="captures_button">Captures</button>
       <button class="button button_menu" type="button" id="up_button">Undefended
@@ -36,19 +36,36 @@
     </div>
     <div class="full_game_panel">
       <div id="left_game_panel">
-        <div class="stat_title">Round</div>
-        <div id="current_round_id">0</div>
+        <div class="left_stat_container">
+          <div class="stat_title">Score</div>
+          <div id="total_score_id">0</div>
+        </div>
       </div>
       <div id="central_game_panel">
         <div id="board" style="width: 500px"></div>
-        <p id='turn_to_move'>White to move<br /></p>
       </div>
       <div id="right_game_panel">
-        <div class="stat_title">Score</div>
-        <div id="total_score_id">0</div>
+        <div id="time_id">0</div>
       </div>
     </div>
+    <div class='below_game_panel'>
+      <p id='turn_to_move'>White to move<br /></p>
+    </div>
+  </div>
 
+  <div id="opaque"></div>
+
+  <div id="finishedGameResultsPanel">
+    <div class="finishedGameResultsContainer">
+      <div id="finishedGameTrophyImage"></div>
+      <div class="finishedGameMsg" id="finishedGameMsg1_id">Great!!!</div>
+      <div class="finishedGameMsg" id="finishedGameMsg2_id">You've got a Smart Owl</div>
+      <div class="line"></div>
+      <div class="finishedGameButtons">
+        <button class="button button_menu" type="button" id="try_again">Try again</button>
+        <button class="button button_menu" type="button" id="go_to_menu">Go to menu</button>
+      </div>
+    </div>
   </div>
 
   <script type="text/javascript" src="db/db_fen_js.js"></script>

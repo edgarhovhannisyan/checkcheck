@@ -26,7 +26,7 @@ var menu_container = document.getElementById("menu_container_id");
 var game_container = document.getElementById("game_container_id");
 var title_ref = document.getElementById("board_title_id");
 var score_ref = document.getElementById("total_score_id");
-var round_ref = document.getElementById("current_round_id");
+//var round_ref = document.getElementById("current_round_id");
 var turn_ref = document.getElementById("turn_to_move");
 
 // Get reference to the menu option buttons and set onClick callbacks
@@ -36,21 +36,30 @@ document.getElementById('captures_button').onclick = function () { startGame(2) 
 document.getElementById('up_button').onclick = function () { startGame(3) }
 
 function reset_game() {
+    alreadyFoundMoves.length = 0;
+    alreadyFoundSquares.length = 0;
     board = null
     game = new Chess()
-    alreadyFoundMoves = []
     total_score = 0
+    game_regime = 0
     current_score = 0
     roundNumber = 0
     num_correct_moves = 0
-    game_regime = 1
-    correctMoves = []
+    num_correct_squares = 0
+    currentCorrectMoves = []
+    currentCorrectSquares = []
+    $board = null
+    squareClass = 'square-55d63'
+    squareToHighlight = null
+    colorToHighlight = null
+    score_ref.innerHTML = total_score
 }
 
 function startGame(current_game_regime) {
     menu_container.style.display = "none";
     game_container.style.display = "block";
     game_regime = current_game_regime
+    startTimer()
     //console.log("startGame() worked and the startNextRound() is called")
     startNextRound(game_regime)
 }
@@ -59,7 +68,7 @@ function startNextRound(regime) {
     setTitle(regime)
     // reset round stats
     roundNumber += 1
-    round_ref.innerHTML = roundNumber
+    //round_ref.innerHTML = roundNumber
     alreadyFoundMoves.length = 0;
     alreadyFoundSquares.length = 0;
     current_score = 0
@@ -474,5 +483,82 @@ function setTurnText(chess_game) {
     turn_ref.innerHTML = "White to move"
     if (chess_game.turn() == 'b') {
         turn_ref.innerHTML = "Black to move"
+    }
+}
+
+function startTimer() {
+    // Set timer
+    var endTime = new Date().getTime();
+    endTime += 60000
+    // Update the count down every 1 second
+    var x = setInterval(function () {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var distance = endTime - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (seconds < 10) {
+            seconds = '0' + seconds
+        }
+
+        // Display the result in the element with id="demo"
+        document.getElementById("time_id").innerHTML = minutes + " : " + seconds;
+
+        // If the count down is finished, write some text
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("time_id").innerHTML = "0 : 00";
+            finishGame()
+        }
+    }, 200);
+}
+
+function finishGame() {
+
+    document.getElementById('opaque').style.display = "block";
+    document.getElementById('finishedGameResultsPanel').style.display = "flex";
+    setTrophyAndMsg(total_score)
+    document.getElementById('try_again').onclick = function () { retryGame(game_regime) }
+    document.getElementById('go_to_menu').onclick = function () { goBackToMenu() }
+}
+function retryGame(game_regime) {
+    var next_regime = game_regime
+    reset_game()
+    document.getElementById('opaque').style.display = "none";
+    document.getElementById('finishedGameResultsPanel').style.display = "none";
+    startGame(next_regime)
+}
+
+function goBackToMenu() {
+    reset_game()
+    document.getElementById('finishedGameResultsPanel').style.display = "none";
+    document.getElementById('opaque').style.display = "none";
+    document.getElementById('game_container_id').style.display = "none";
+    document.getElementById('menu_container_id').style.display = "block";
+}
+
+function setTrophyAndMsg(total_score) {
+    if (total_score == 0) {
+        document.getElementById('finishedGameMsg1_id').innerHTML = "Ooops! : " + total_score + " point";
+        document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Sleeping Owl!";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl11.PNG)";
+    } else if (total_score > 0 && total_score < 15) {
+        document.getElementById('finishedGameMsg1_id').innerHTML = "Cool! : " + total_score + " points";
+        document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Baby Owl!";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl22.PNG)";
+    } else if (total_score >= 15 && total_score < 30) {
+        document.getElementById('finishedGameMsg1_id').innerHTML = "Impressive! : " + total_score + " points";
+        document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Smart Owl!";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl33.PNG)";
+    } else {
+        document.getElementById('finishedGameMsg1_id').innerHTML = "Wow! : " + total_score + " points";
+        document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Super Fox!";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/fox11.PNG)";
     }
 }
