@@ -547,18 +547,18 @@ function setTrophyAndMsg(total_score) {
     if (total_score == 0) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Ooops! : " + total_score + " point";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Sleeping Owl!";
-        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl11.PNG)";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl11.png)";
     } else if (total_score > 0 && total_score < 15) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Cool! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Baby Owl!";
-        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl22.PNG)";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl22.png)";
     } else if (total_score >= 15 && total_score < 30) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Impressive! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Smart Owl!";
-        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl33.PNG)";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl33.png)";
     } else {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Wow! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Super Fox!";
-        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/fox11.PNG)";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/fox11.png)";
     }
 }
