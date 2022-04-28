@@ -120,9 +120,9 @@ function startNextRound(regime) {
     setTurnText(game)
     // Touchmove semifix
     board = Chessboard('board', config)
-    jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
-        e.preventDefault();
-    });
+    // jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
+    //     e.preventDefault();
+    // });
 }
 
 function pickRandomFEN(db_fen) {
@@ -489,7 +489,7 @@ function setTurnText(chess_game) {
 function startTimer() {
     // Set timer
     var endTime = new Date().getTime();
-    endTime += 60000
+    endTime += 240000
     // Update the count down every 1 second
     var x = setInterval(function () {
 
