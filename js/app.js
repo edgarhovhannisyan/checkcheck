@@ -489,7 +489,7 @@ function setTurnText(chess_game) {
 function startTimer() {
     // Set timer
     var endTime = new Date().getTime();
-    endTime += 240000
+    endTime += 121000
     // Update the count down every 1 second
     var x = setInterval(function () {
 
@@ -544,21 +544,25 @@ function goBackToMenu() {
 }
 
 function setTrophyAndMsg(total_score) {
-    if (total_score == 0) {
+    if (total_score >= 0 && total_score < 15) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Ooops! : " + total_score + " point";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Sleeping Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl11.png)";
-    } else if (total_score > 0 && total_score < 15) {
+    } else if (total_score >= 15 && total_score < 25) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Cool! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Baby Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl22.png)";
-    } else if (total_score >= 15 && total_score < 30) {
+    } else if (total_score >= 25 && total_score < 40) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Impressive! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Smart Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl33.png)";
-    } else {
+    } else if (total_score >= 40 && total_score < 60) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Wow! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Super Fox!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/fox11.png)";
+    } else {
+        document.getElementById('finishedGameMsg1_id').innerHTML = "Impossible! : " + total_score + " points";
+        document.getElementById('finishedGameMsg2_id').innerHTML = "You must be an Alien!";
+        document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/alien11.png)";
     }
 }
