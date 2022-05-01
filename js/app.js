@@ -489,7 +489,7 @@ function setTurnText(chess_game) {
 function startTimer() {
     // Set timer
     var endTime = new Date().getTime();
-    endTime += 121000
+    endTime += 12000  //121000
     // Update the count down every 1 second
     var x = setInterval(function () {
 

@@ -1,5 +1,5 @@
 * {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     -webkit-user-select: none;
     /* Safari */
     -moz-user-select: none;
@@ -27,8 +27,9 @@ body {
     margin-top: 100px;
     margin-bottom: 50px;
     text-align: center;
-    font-size: xx-large;
+    font-size: 50px;
     color: #f0d9b5;
+    font-family: 'Amatic SC', cursive;
 }
 
 .board_title_container {
@@ -41,6 +42,7 @@ body {
 
 #board_title_id {
     color: beige;
+    font-family: 'Mali', cursive;
 }
 
 #turn_to_move {
@@ -50,6 +52,7 @@ body {
     font-size: x-large;
     margin-top: 12px;
     color: beige;
+    font-family: 'Mali', cursive;
 }
 
 #game_container_id {
@@ -71,13 +74,14 @@ body {
 .button {
     background-color: rgb(0 0 0 / 24%);
     /* Green */
+    font-family: 'Amatic SC', cursive;
     border: none;
     color: #f0d9b5;
     padding: 15px 32px;
     text-align: center;
     display: inline-block;
     font-size: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    /*font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;*/
     margin: 4px 2px;
     cursor: pointer;
     -webkit-transition-duration: 0.4s;
@@ -88,9 +92,11 @@ body {
 
 .button_menu {
     display: block;
-    box-shadow: 0 12px 16px 0 rgba(191, 191, 191, 0.24), 0 17px 50px 0 rgba(191, 191, 191, 0.19);
+    box-shadow: 0 12px 16px 0 rgba(191, 191, 191, 0.24), 0 17px 50px 0 rgba(191, 191, 191, 0.6);
     margin-top: 16px;
     margin-bottom: 16px;
+    font-size: xx-large;
+    font-weight: bold;
 }
 
 .button_menu:hover {
@@ -98,6 +104,8 @@ body {
     box-shadow: none;
     margin-top: 16px;
     margin-bottom: 16px;
+    font-size: xx-large;
+    font-weight: bold;
 }
 
 #left_game_panel {
@@ -198,6 +206,7 @@ body {
     font-weight: bold;
     text-align: center;
     color: #f0d9b5;
+    font-family: 'Mali', cursive;
 }
 
 .line {
@@ -217,6 +226,16 @@ body {
 
 .highlight {
     box-shadow: inset 0 0 3px 3px rgba(23, 99, 34, 0.978);
+}
+
+#owlImage {
+    position: absolute;
+    margin-left: 55%;
+    margin-top: -3%;
+    width: 5%;
+    content: url(../img/interface/owl_logo.png);
+    z-index: 1000;
+    background: transparent;
 }
 
 #opaque {
