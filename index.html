@@ -34,10 +34,7 @@
       <button class="button button_menu" type="button" id="captures_button">Captures</button>
       <button class="button button_menu" type="button" id="up_button">Undefended
         pieces</button>
-      <!-- <label class="switch">
-        <input type="checkbox">
-        <span class="slider round"></span>
-      </label> -->
+      <div class='footer' id="footer_id"> </div>
     </div>
   </div>
   <div class="game_container" id="game_container_id">
@@ -55,10 +52,15 @@
         <div id="board" style="width: 500px"></div>
       </div>
       <div id="right_game_panel">
+        <div style="height: 40%;"></div>
         <div id="time_id">0</div>
+        <div style="display: flex;height: 40%;align-items: flex-end;justify-content: space-around;">
+          <button class="button button_menu" type="button" id="finish_button">Finish</button>
+        </div>
       </div>
     </div>
     <div class='below_game_panel'>
+      <div id=color_to_move_icon></div>
       <p id='turn_to_move'>White to move<br /></p>
     </div>
   </div>
@@ -76,9 +78,6 @@
         <button class="button button_menu" type="button" id="go_to_menu">Go to menu</button>
       </div>
     </div>
-  </div>
-
-  <div class='footer' id="footer_id">
   </div>
 
   <script type="text/javascript" src="db/db_fen_js.js"></script>

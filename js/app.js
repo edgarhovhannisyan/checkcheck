@@ -14,7 +14,7 @@ var total_score = 0
 var game_regime = 0
 var current_score = 0
 var roundNumber = 0
-var gameTime = 121000 // game time in mls
+var gameTime = 21000 // game time in mls
 var gameTimer = null
 var num_correct_moves = 0
 var num_correct_squares = 0
@@ -37,6 +37,7 @@ var turn_ref = document.getElementById("turn_to_move");
 document.getElementById('checks_button').onclick = function () { startGame(1) }
 document.getElementById('captures_button').onclick = function () { startGame(2) }
 document.getElementById('up_button').onclick = function () { startGame(3) }
+document.getElementById('finish_button').onclick = function () { finishGame() }
 
 function reset_game() {
     alreadyFoundMoves.length = 0;
@@ -47,7 +48,7 @@ function reset_game() {
     game_regime = 0
     current_score = 0
     roundNumber = 0
-    gameTime = 121000
+    gameTime = 21000
     gameTimer = null
     num_correct_moves = 0
     num_correct_squares = 0
@@ -236,7 +237,7 @@ function getListOfCorrectSquares(fen) {
         return emptyList
     }
     var allPieceSquares = getAllPieceSquares(tempGame)
-    console.log(allPieceSquares)
+    //console.log(allPieceSquares)
     var ind
     for (ind = 0; ind < allPieceSquares.length; ind++) {
         var selected_square = allPieceSquares[ind]
@@ -480,20 +481,23 @@ function cloneAndPlay(audioNode) {
 
 function setTitle(current_game_regime) {
     switch (current_game_regime) {
-        case 1: title_ref.innerHTML = "Find all checking moves in the position"
+        case 1: title_ref.innerHTML = "Find all checking moves for the active player"
             break
-        case 2: title_ref.innerHTML = "Find all capturing moves in the position"
+        case 2: title_ref.innerHTML = "Find all capturing moves for the active player"
             break
-        case 3: title_ref.innerHTML = "Find all undefended squares in the position"
+        case 3: title_ref.innerHTML = "Find all undefended pieces of the active player"
             break
         default: title_ref.innerHTML = "Find all correct moves/squares in the position"
     }
 }
 
 function setTurnText(chess_game) {
-    turn_ref.innerHTML = "White to move"
+    // Helper function to set text and icon for whose turn it is
+    turn_ref.innerHTML = "White's turn"
+    document.getElementById('color_to_move_icon').style.content = "url(img/chesspieces/wikipedia/wK.png)";
     if (chess_game.turn() == 'b') {
-        turn_ref.innerHTML = "Black to move"
+        turn_ref.innerHTML = "Black's turn"
+        document.getElementById('color_to_move_icon').style.content = "url(img/chesspieces/wikipedia/bK.png)";
     }
 }
 
@@ -529,8 +533,7 @@ function startTimer(remainingTime) {
 
         // If the countdown is finished, write some text
         if (distance < 0) {
-            clearInterval(gameTimer);
-            document.getElementById("time_id").innerHTML = "0 : 00";
+
             finishGame()
         }
         gameTime = distance
@@ -538,13 +541,16 @@ function startTimer(remainingTime) {
 }
 
 function finishGame() {
-
+    clearInterval(gameTimer);
+    document.getElementById("time_id").innerHTML = "0 : 00";
+    document.getElementById("time_id").style.animationName = "none";
     document.getElementById('opaque').style.display = "block";
     document.getElementById('finishedGameResultsPanel').style.display = "flex";
     setTrophyAndMsg(total_score)
     document.getElementById('try_again').onclick = function () { retryGame(game_regime) }
     document.getElementById('go_to_menu').onclick = function () { goBackToMenu() }
 }
+
 function retryGame(game_regime) {
     var next_regime = game_regime
     reset_game()
@@ -562,19 +568,19 @@ function goBackToMenu() {
 }
 
 function setTrophyAndMsg(total_score) {
-    if (total_score >= 0 && total_score < 15) {
+    if (total_score == 0) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Ooops! : " + total_score + " point";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Sleeping Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl11.png)";
-    } else if (total_score >= 15 && total_score < 25) {
+    } else if (total_score > 0 && total_score < 15) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Cool! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Baby Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl22.png)";
-    } else if (total_score >= 25 && total_score < 40) {
+    } else if (total_score >= 15 && total_score < 30) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Impressive! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Smart Owl!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/owl33.png)";
-    } else if (total_score >= 40 && total_score < 60) {
+    } else if (total_score >= 30 && total_score < 50) {
         document.getElementById('finishedGameMsg1_id').innerHTML = "Wow! : " + total_score + " points";
         document.getElementById('finishedGameMsg2_id').innerHTML = "You've earned a Super Fox!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/fox11.png)";
@@ -592,7 +598,7 @@ function wrongMoveTimeRed() {
 
     requestAnimationFrame(() => {
         setTimeout(() => {
-            refTime.style.animationName = ""
+            refTime.style.animationName = "textRed"
         }, 0);
     });
 }
