@@ -11,7 +11,8 @@
 }
 
 body {
-    background-image: url('../img/interface/background_pic.jpg')
+    background-image: url('../img/interface/background_pic.jpg');
+    overscroll-behavior-y: contain;
 }
 
 #menu {

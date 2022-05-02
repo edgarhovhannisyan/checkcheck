@@ -128,6 +128,9 @@ function startNextRound(regime) {
     // jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
     //     e.preventDefault();
     // });
+    // jQuery('#board').on('scroll contextmenu', function (e) {
+    //     e.preventDefault();
+    // });
 }
 
 function pickRandomFEN(db_fen) {
