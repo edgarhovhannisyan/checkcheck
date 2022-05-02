@@ -10,8 +10,13 @@
     /* Standard */
 }
 
+html {
+    touch-action: none;
+}
+
 body {
     background-image: url('../img/interface/background_pic.jpg');
+    touch-action: none;
 }
 
 #menu {
