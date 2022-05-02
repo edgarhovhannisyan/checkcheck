@@ -14,7 +14,7 @@ var total_score = 0
 var game_regime = 0
 var current_score = 0
 var roundNumber = 0
-var gameTime = 21000 // game time in mls
+var gameTime = 61000 // game time in mls
 var gameTimer = null
 var num_correct_moves = 0
 var num_correct_squares = 0
@@ -48,7 +48,7 @@ function reset_game() {
     game_regime = 0
     current_score = 0
     roundNumber = 0
-    gameTime = 21000
+    gameTime = 61000
     gameTimer = null
     num_correct_moves = 0
     num_correct_squares = 0
