@@ -7,12 +7,15 @@ const audio_error = new Audio('sound/audio_wrong_move.wav')
 const audio_correct = new Audio('sound/audio_correct_move.wav')
 const audio_next_round = new Audio('sound/audio_next_round.wav')
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+const penalty = 3000 // penalty for wrong move/square in mls
 var board = null
 var game = new Chess()
 var total_score = 0
 var game_regime = 0
 var current_score = 0
 var roundNumber = 0
+var gameTime = 121000 // game time in mls
+var gameTimer = null
 var num_correct_moves = 0
 var num_correct_squares = 0
 var currentCorrectMoves = []
@@ -44,6 +47,8 @@ function reset_game() {
     game_regime = 0
     current_score = 0
     roundNumber = 0
+    gameTime = 121000
+    gameTimer = null
     num_correct_moves = 0
     num_correct_squares = 0
     currentCorrectMoves = []
@@ -59,7 +64,7 @@ function startGame(current_game_regime) {
     menu_container.style.display = "none";
     game_container.style.display = "block";
     game_regime = current_game_regime
-    startTimer()
+    startTimer(gameTime)
     //console.log("startGame() worked and the startNextRound() is called")
     startNextRound(game_regime)
 }
@@ -160,6 +165,7 @@ function onDragStart(source, piece, position, orientation) {
             $current_score.html(current_score)
         } else {
             cloneAndPlay(audio_error)
+            startTimer(gameTime - penalty)
         }
         return false
         // If not in regime 3 allow piece for only the side to move and if the game is not over
@@ -300,7 +306,7 @@ function rmDuplicatePromotions(correctMoves, regime) {
 }
 
 function hasPromotionInCorrect(correctMoves) {
-    //helper function for debugging positions with promotion moves
+    // Helper function for debugging positions with promotion moves
     var i
     const list_rm_moves = correctMoves.filter(move => move.flags.includes('p'));
     if (list_rm_moves.length < 1) {
@@ -422,7 +428,7 @@ function onDrop(source, target) {
     var move = game.move({
         from: source,
         to: target,
-        promotion: 'q' // TODO: always promote to a queen for example simplicity
+        promotion: 'q'
     })
 
     // illegal move
@@ -435,6 +441,7 @@ function onDrop(source, target) {
         var fromToObject = { from: move.from, to: move.to }
         if (containsObject(fromToObject, alreadyFoundMoves)) {
             cloneAndPlay(audio_error)
+            startTimer(gameTime - penalty)
             //console.log("This move has already been found previously!")
         } else {
             alreadyFoundMoves.push(fromToObject)
@@ -450,6 +457,7 @@ function onDrop(source, target) {
         $current_score.html(current_score)
     } else {
         cloneAndPlay(audio_error)
+        startTimer(gameTime - penalty)
     }
     game.undo()
 }
@@ -486,12 +494,18 @@ function setTurnText(chess_game) {
     }
 }
 
-function startTimer() {
+function startTimer(remainingTime) {
+    // Check if there is already an interval, if so clear it
+    if (gameTimer != null) {
+        console.log('There is already a timeInterval. Let\'s clear it')
+        wrongMoveTimeRed()
+        clearInterval(gameTimer)
+    }
     // Set timer
     var endTime = new Date().getTime();
-    endTime += 121000
+    endTime += remainingTime
     // Update the count down every 1 second
-    var x = setInterval(function () {
+    gameTimer = setInterval(function () {
 
         // Get today's date and time
         var now = new Date().getTime();
@@ -507,15 +521,16 @@ function startTimer() {
             seconds = '0' + seconds
         }
 
-        // Display the result in the element with id="demo"
+        // Display the result in the element with id="time_id"
         document.getElementById("time_id").innerHTML = minutes + " : " + seconds;
 
-        // If the count down is finished, write some text
+        // If the countdown is finished, write some text
         if (distance < 0) {
-            clearInterval(x);
+            clearInterval(gameTimer);
             document.getElementById("time_id").innerHTML = "0 : 00";
             finishGame()
         }
+        gameTime = distance
     }, 200);
 }
 
@@ -565,4 +580,16 @@ function setTrophyAndMsg(total_score) {
         document.getElementById('finishedGameMsg2_id').innerHTML = "You must be an Alien!";
         document.getElementById('finishedGameTrophyImage').style.content = "url(img/results/alien11.png)";
     }
+}
+
+function wrongMoveTimeRed() {
+    let refTime = document.getElementById("time_id");
+
+    refTime.style.animationName = "none";
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            refTime.style.animationName = ""
+        }, 0);
+    });
 }
