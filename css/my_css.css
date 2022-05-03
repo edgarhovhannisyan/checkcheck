@@ -11,7 +11,8 @@
 }
 
 body {
-    background-image: url('../img/interface/background_pic.jpg');
+    background-color: olivedrab;
+    /*background-image: url('../img/interface/background_pic.jpg');*/
 }
 
 #menu {
@@ -101,7 +102,7 @@ body {
 
 .button_menu {
     display: block;
-    box-shadow: 0 0 1px 0 rgb(191 191 191 / 24%), 0 0 4px 0 rgb(191 191 191 / 60%);
+    /*box-shadow: 0 0 1px 0 rgb(191 191 191 / 24%), 0 0 4px 0 rgb(191 191 191 / 60%);*/
     /*box-shadow: 0 0 16px 0 rgba(191, 191, 191, 0.24), 0 0 50px 0 rgba(191, 191, 191, 0.6);*/
     margin-top: 16px;
     margin-bottom: 16px;
