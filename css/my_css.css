@@ -310,6 +310,10 @@ body {
     }
 
     .full_game_panel>div {
+        width: auto !important
+    }
+
+    #finishedGameResultsPanel {
         width: 90%;
         max-width: 500px;
     }
@@ -319,5 +323,11 @@ body {
 @media only screen and (max-width: 500px) {
     #board {
         width: 400px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #board {
+        width: 300px;
     }
 }
