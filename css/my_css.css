@@ -74,11 +74,13 @@ body {
 .full_game_panel {
     width: 100%;
     display: flex;
+    align-items: center;
 }
 
 #board {
     margin: auto;
     align-self: center;
+    width: 500px;
 }
 
 .button {
@@ -195,7 +197,7 @@ body {
     left: 50%;
     transform: translate(-50%, 0);
     display: none;
-    background-color: rgb(67 67 67);
+
 }
 
 .finishedGameResultsContainer {
@@ -204,7 +206,7 @@ body {
     border: #000000;
     border-width: 1px;
     z-index: 1001;
-    background-color: rgb(58 58 58);
+    background-color: rgb(117 86 142);
 }
 
 
@@ -298,5 +300,24 @@ body {
     to {
         color: rgb(200, 0, 0);
         font-size: 92px;
+    }
+}
+
+@media only screen and (max-width: 1300px) {
+    .full_game_panel {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .full_game_panel>div {
+        width: 90%;
+        max-width: 500px;
+    }
+}
+
+
+@media only screen and (max-width: 500px) {
+    #board {
+        width: 400px;
     }
 }
