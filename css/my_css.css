@@ -11,7 +11,7 @@
 }
 
 body {
-    background-color: olivedrab;
+    background-color: darkslategrey;
     /*background-image: url('../img/interface/background_pic.jpg');*/
 }
 
@@ -206,7 +206,7 @@ body {
     border: #000000;
     border-width: 1px;
     z-index: 1001;
-    background-color: rgb(117 86 142);
+    background-color: darkslategrey;
 }
 
 
@@ -221,6 +221,8 @@ body {
     padding: 32px;
     padding-top: 32px;
 }
+
+
 
 .finishedGameMsg {
     font-size: xx-large;
@@ -260,6 +262,10 @@ body {
     background: transparent;
 }
 
+#owlImage:hover {
+    content: url(../img/interface/owl_logo1.png);
+}
+
 #opaque {
     position: fixed;
     top: 0px;
@@ -283,12 +289,16 @@ body {
     animation-name: none;
     animation-duration: 0.2s;
     animation-iteration-count: 1;
-
-
 }
 
 * html #opaque {
     position: absolute;
+}
+
+#footer_id {
+    content: url(../img/interface/chess3.png);
+    margin: auto;
+    width: auto;
 }
 
 /* The animation code */
@@ -318,7 +328,6 @@ body {
         max-width: 500px;
     }
 }
-
 
 @media only screen and (max-width: 500px) {
     #board {

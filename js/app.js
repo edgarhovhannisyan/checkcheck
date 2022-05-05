@@ -8,7 +8,7 @@ const audio_correct = new Audio('sound/audio_correct_move.wav')
 const audio_next_round = new Audio('sound/audio_next_round.wav')
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const penalty = 3000 // penalty for wrong move/square in mls
-var board = null
+var globalBoard = null
 var game = new Chess()
 var total_score = 0
 var game_regime = 0
@@ -42,7 +42,7 @@ document.getElementById('finish_button').onclick = function () { finishGame() }
 function reset_game() {
     alreadyFoundMoves.length = 0;
     alreadyFoundSquares.length = 0;
-    board = null
+    globalBoard = null
     game = new Chess()
     total_score = 0
     game_regime = 0
@@ -124,14 +124,16 @@ function startNextRound(regime) {
     }
     // Show who's turn it is
     setTurnText(game)
+
     // Touchmove semifix
-    board = Chessboard('board', config)
-    // jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
-    //     e.preventDefault();
-    // });
-    jQuery('#board').on('scroll contextmenu', function (e) {
+    globalBoard = Chessboard('board', config)
+
+    jQuery('#board').on('scroll touchmove touchend touchstart contextmenu', function (e) {
         e.preventDefault();
     });
+    // jQuery('#board').on('scroll', function (e) {
+    //     e.preventDefault();
+    // });
 }
 
 function pickRandomFEN(db_fen) {
@@ -436,8 +438,10 @@ function onDrop(source, target) {
     })
 
     // illegal move
-    if (move === null) return 'snapback'
-
+    if (move === null) {
+        console.log('no move is illegal move')
+        return 'snapback'
+    }
     // if in check, revert to previous position
 
     if (containsObject(move, currentCorrectMoves)) {
@@ -456,6 +460,8 @@ function onDrop(source, target) {
                 return startNextRound(game_regime)
             } else {
                 cloneAndPlay(audio_correct)
+                highlightSquare(source)
+                highlightSquare(target)
             }
         }
         $current_score.html(current_score)
@@ -469,7 +475,7 @@ function onDrop(source, target) {
 // update the board position after the piece snap
 // for castling, en passant, pawn promotion
 function onSnapEnd() {
-    board.position(game.fen())
+    globalBoard.position(game.fen())
 }
 
 // function that will clone the audio node, and play it
