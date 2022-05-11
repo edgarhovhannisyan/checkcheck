@@ -4,7 +4,8 @@
 const alreadyFoundMoves = []
 const alreadyFoundSquares = []
 const audio_error = new Audio('sound/audio_wrong_move.wav')
-const audio_correct = new Audio('sound/audio_correct_move.wav')
+//const audio_correct = new Audio('sound/audio_correct_move.wav')
+const audio_correct = new Audio('sound/correct_move.mp3')
 const audio_next_round = new Audio('sound/audio_next_round.wav')
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const penalty = 3000 // penalty for wrong move/square in mls
